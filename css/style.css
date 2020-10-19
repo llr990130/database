@@ -1,0 +1,33 @@
+*{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* height: 100%; */
+}
+html{
+    height: 100%;
+}
+body{
+    margin: 0;
+    padding: 0;
+    
+}
+.bgimg{
+    background: url('/images/index.jpg') no-repeat;
+    background-size:cover;
+    /* background-attachment:fixed; */
+}
+.rukou{
+
+    background: rgba(58,98,215,0.7);
+    text-align: center;
+    align-items: center;
+}
+.bt_login{
+    height: 65px;
+    width: 35%;
+    border: 0;
+    background-color: #0f2a7b;
+    color: white;
+    margin-bottom: 120px;
+}
