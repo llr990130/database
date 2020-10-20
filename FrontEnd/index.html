@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>入口页</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body class="bgimg" style="display: flex; align-items: center;">
+    <section style="margin: auto;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-2"></div>
+                <div class=" col-lg-6 col-md-6 col-sm-8 col-xs-12">
+                    <div class="rukou">
+                        <h1 style="color: white; font-size: 38px; padding-top: 135px; margin-bottom: 25px; margin-top: 0;">XXXXX信息门户
+                        </h1>
+                        <p style="color:black; font-size: 32px; margin-bottom: 25px;">由此进入</p>
+                        <button class="bt_login" onclick="javascrtpt:window.location.href='login.html'">立即登录</button>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-2"></div>
+            </div>
+        </div>
+
+
+    </section>
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<!-- <script src="js/layer/layer.js"></script> -->
+<script>
+    $(window).resize(function () {
+        $("section").css({
+            position: "absolute",
+            left: ($(window).width() - $("section").outerWidth()) / 2,
+            top: ($(window).height() - $("section").outerHeight()) / 2
+        });
+    });
+    $(function(){
+        $(window).resize();
+    });
+</script>
+
+</html>

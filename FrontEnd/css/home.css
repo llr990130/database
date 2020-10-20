@@ -1,0 +1,32 @@
+*{
+    margin: 0;
+    padding: 0;
+    /* text-decoration: none;
+    list-style: none;
+    box-sizing: border-box; */
+    width: 100%;
+}
+.bgimg{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    /* background: url('/images/index.jpg') no-repeat; */
+    background-attachment:fixed;
+    background-size: cover;
+    overflow-y: auto;
+}
+.bgimg::after{
+    min-height: 1400px; 
+    content: "";
+    background: url('/images/index.jpg') no-repeat;
+    background-size:cover;
+    background-attachment:fixed;
+    opacity: 0.6;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+}
