@@ -19,7 +19,7 @@
 .bgimg::after{
     min-height: 1400px; 
     content: "";
-    background: url('/images/index.jpg') no-repeat;
+    background: url('../images/index.jpg') no-repeat;
     background-size:cover;
     background-attachment:fixed;
     opacity: 0.6;

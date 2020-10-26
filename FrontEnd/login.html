@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .current{
+        .current {
             color: #3a62d7;
             border-bottom: 2px solid #3a62d7;
         }
-        .uncurrent{
+
+        .uncurrent {
             color: black;
             border-bottom: 2px solid #dbdbdb;
         }
@@ -45,13 +46,13 @@
                     </div>
                     <div>
                         <div class="dom" id="login" style="display: block;">
-                            <form action="home.html">
+                            <!-- <form method="post"> -->
                                 <div class="s1" style="margin-top: 50px; margin-bottom: 30px;">
-                                    <input name="user" type="text" placeholder="请输入账号"
+                                    <input id="username" name="user" type="text" placeholder="请输入账号"
                                         style="height: 40px; padding: 5px; color: #dbdbdb; border: #dbdbdb;">
                                 </div>
                                 <div class="s1" style="margin-bottom: 30px;">
-                                    <input name="pwd" type="password" placeholder="请输入密码"
+                                    <input id="password" name="pwd" type="password" placeholder="请输入密码"
                                         style="height: 40px; padding: 5px; color: #dbdbdb; border: #dbdbdb;">
                                 </div>
                                 <button type="submit" class="btn"
@@ -64,25 +65,25 @@
                                     <span style="width: 20%; text-align: center;">记住密码</span>
                                     <span style="float: right; color: #3a62d7; width: 25%;"><a href="#">忘记密码？</a></span>
                                 </div>
-                            </form>
+                            <!-- </form> -->
                         </div>
                         <div class="dom" id="register" style="display: none;">
                             <form action="#">
                                 <div class="s1" style="margin-top: 25px; margin-bottom: 25px;">
-                                    <input name="user" type="text" placeholder="请输入账号"
+                                    <input id="usernameRegister" name="user" type="text" placeholder="请输入账号"
                                         style="height: 40px; padding: 5px; color: #dbdbdb; border: #dbdbdb;">
                                 </div>
                                 <div class="s1" style="margin-bottom: 25px;">
-                                    <input name="pwd" type="password" placeholder="请输入密码"
+                                    <input id="passwordRegister" name="pwd" type="password" placeholder="请输入密码"
                                         style="height: 40px; padding: 5px; color: #dbdbdb; border: #dbdbdb;">
                                 </div>
                                 <div class="s1" style="margin-bottom: 25px;">
-                                    <input name="pwd" type="password" placeholder="请再次输入密码"
+                                    <input id="passwordRegisterRepeat" name="pwd" type="password" placeholder="请再次输入密码"
                                         style="height: 40px; padding: 5px; color: #dbdbdb; border: #dbdbdb;">
                                 </div>
                                 <button type="submit" class="btn"
                                     style="height: 40px; background: #3a62d7; border-radius: 1px; color: white; margin-bottom: 15px;"
-                                    onclick="loginTap()">
+                                    onclick="register()">
                                     立即注册
                                 </button>
                                 <div style="text-align: center;">已经有账户了？<a href="#" onclick="loginTap()">点此登录</a></div>
@@ -108,30 +109,202 @@
             top: ($(window).height() - $("section").outerHeight()) / 2
         });
     });
-    function login(){
-        window.location.href = 'home.html';
+
+    function register() {
+        var registerData = {};
+        registerData.username = $("#usernameRegister")[0].value;
+        registerData.password = $("#passwordRegister")[0].value;
+        registerData.passwordNew = $("#passwordRegisterRepeat")[0].value;
+        //验证登录名
+        //输入不能为空
+        if (registerData.username.length < 1) {
+            alert("请输入用户名！");
+            return;
+        }
+        //要求字母开头，允许5-16字节，允许字母数字下划线
+        var reg = /^[a-zA-Z][a-zA-Z0-9_]{4,15}$/;
+        if (!reg.test(registerData.username)) {
+            alert("请输入正确的用户名格式（字母开头，长度要求在5-16之间）。");
+            return;
+        }
+        //判断用户名是否重复
+        $.ajax({
+            type: "post",
+            url: "http://localhost:2331/api/User/isUsernameUnique?str=" + registerData.username,
+            // data:{str: registerData.username},
+            success: function (data) {
+                if (!data) {
+                    alert("用户名重复，请重新输入！");
+                    return;
+                }
+            },
+            error(e) {
+                console.log(e);
+                alert("访问isUsernameUnique失败！");
+            }
+        })
+        //验证密码
+        //输入不能为空
+        if (registerData.password.length < 1 || registerData.passwordNew.length < 1) {
+            alert("请输入密码！");
+            return;
+        }
+        //以字母开头，长度在6~18之间，只能包含字母、数字和下划线
+        var regPassword = /^[a-zA-Z][a-zA-Z0-9_]{5,17}$/;
+        if (!reg.test(registerData.password) || !reg.test(registerData.passwordNew)) {
+            alert("密码格式错误！");
+            return;
+        }
+        //验证两次密码是否一致
+        if (registerData.password != registerData.passwordNew) {
+            alert("两次输入的密码不一致");
+            return;
+        }
+        //传入后端，插入user表
+        var importData = {};
+        importData.username = registerData.username;
+        importData.password = registerData.password;
+        importData.createTime = getDateTime();
+        $.ajax({
+            type: "post",
+            url: "http://localhost:2331/api/User/register",
+            data: importData,
+            success: function (data) {
+                if (data == true) {
+                    window.location.href = 'registerSuccess.html';
+                }
+            },
+            error(e) {
+                console.log(e);
+                alert("注册失败！");
+            }
+        })
     }
-    function registerTab(){
-        $("#login").css("display","none");
-        $("#register").css("display","block");
+
+    function login() {
+        //获取用户输入的登录名和密码
+        var inputData = {};
+        inputData.username = $("#username")[0].value;
+        inputData.password = $("#password")[0].value;
+
+        //验证登录名
+        //输入不能为空
+        if (inputData.username.length < 1) {
+            alert("请输入用户名！");
+            console.log("请输入用户名");
+            return;
+        }
+        //要求字母开头，允许5-16字节，允许字母数字下划线
+        var reg = /^[a-zA-Z][a-zA-Z0-9_]{4,15}$/;
+        if (!reg.test(inputData.username)) {
+            alert("请输入正确的用户名格式（字母开头，长度要求在5-16之间）。");
+            return;
+        }
+        //验证密码
+        //输入不能为空
+        if (inputData.password.length < 1) {
+            alert("请输入密码！");
+            return;
+        }
+        //以字母开头，长度在6~18之间，只能包含字母、数字和下划线
+        var regPassword = /^[a-zA-Z][a-zA-Z0-9_]{5,17}$/;
+        if (!reg.test(inputData.password)) {
+            alert("密码错误！");
+            return;
+        }
+        //传入后端，验证用户名与密码是否正确
+        $.ajax({
+            type: "post",
+            url: "http://localhost:2331/api/User/Login",
+            data: inputData,
+            async: false,
+            success: function (data) {
+
+                if (data.result == false) {
+                    alert("输入的用户名不存在或密码错误！");
+                    return;
+                }
+                else {
+                    setCookie("username", data.username, 365);
+                    setCookie("password", data.password, 365);
+                    var UserName = getCookie("username");
+                    var PassWord = getCookie("password");
+                    var Method = "登录了系统";
+                    var ticket = data.Ticket;
+                    setCookie("Ticket", ticket, 365);
+                    var log = {};
+                    log.username = UserName;
+                    log.dateTime = getDateTime();
+                    log.method = Method;
+                    $.ajax({
+                        type: "post",
+                        url: "http://localhost:2331/api/User/userLog",
+                        data: log,
+                        async: false,
+                        success: function () {
+                            // windows.location.href = 'home.html?username='+log.username + '&Ticeket=' + ticket;
+                            window.location.href = 'home.html?Username=' + log.username + '&Ticket=' + ticket;
+                        },
+                        error: function (e) {
+                            console.log(e);
+                            alert("记录日志失败！");
+                        }
+                    });
+                }
+
+            },
+            error: function (e) {
+                console.log(e);
+                alert("登录失败！");
+            }
+        })
+
+    }
+    function getDateTime() {
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = now.getMonth();
+        var day = now.getDate();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var seconds = now.getSeconds();
+        var time = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + seconds;
+        return time;
+    }
+    function registerTab() {
+        $("#login").css("display", "none");
+        $("#register").css("display", "block");
         $("#loginTab").removeClass("current");
         $("#loginTab").addClass("uncurrent");
         $("#registerTab").addClass("current");
         $("#registerTab").removeClass("uncurrent");
     }
-    function loginTap(){
-        $("#register").css("display","none");
-        $("#login").css("display","block");
+    function loginTap() {
+        $("#register").css("display", "none");
+        $("#login").css("display", "block");
         $("#loginTab").addClass("current");
         $("#loginTab").removeClass("uncurrent");
         $("#registerTab").removeClass("current");
         $("#registerTab").addClass("uncurrent");
     }
+    function setCookie(name, value, day) {
+        var date = new Date();
+        date.setDate(date.getDate() + day);
+        document.cookie = name + "=" + value + ";expires=" + date;
+    }
+    function getCookie(name) {
+        var keyName = name + "=";
+        let cookies = document.cookie.split(';');
+        for(let i = 0; i < cookies.length; i++){
+            let c = cookies[i].trim();
+            if(c.indexOf(keyName) == 0){
+                return c.substring(keyName.length, c.length);
+            }
+        }
+        return null;
+    }
     $(function () {
         $(window).resize();
-        function login(){
-        window.location.href = 'home.html';
-    }
     });
 
 </script>

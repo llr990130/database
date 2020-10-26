@@ -96,6 +96,41 @@
 <script src="js/bootstrap.min.js"></script>
 <!-- <script src="js/layer/layer.js"></script> -->
 <script>
+    $(function(){
+        var Ticket = getCookie("Ticket");
+        $.ajax({
+            type: "get",
+            url: "http://localhost:2331/api/Homehtml/loadPage",
+            data: {},
+            beforeSend: function(XHR){
+                //发送ajax请求前向http的head里面加入验证信息
+                XHR.setRequestHeader('Authorization','BasicAuth ' + Ticket);
+            },
+            success: function(data){
+                return;
+            },
+            error: function(e){
+                console.log(e);
+                alert("访问loadPage失败！");
+            }
+        });
+    });
+    function setCookie(name, value, day) {
+        var date = new Date();
+        date.setDate(date.getDate() + day);
+        document.cookie = name + "=" + value + ";expires=" + date;
+    }
+    function getCookie(name) {
+        var keyName = name + "=";
+        let cookies = document.cookie.split(';');
+        for(let i = 0; i < cookies.length; i++){
+            let c = cookies[i].trim();
+            if(c.indexOf(keyName) == 0){
+                return c.substring(keyName.length, c.length);
+            }
+        }
+        return null;
+    }
 </script>
 
 </html>

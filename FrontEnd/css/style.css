@@ -13,7 +13,7 @@ body{
     
 }
 .bgimg{
-    background: url('/images/index.jpg') no-repeat;
+    background: url('../images/index.jpg') no-repeat;
     background-size:cover;
     /* background-attachment:fixed; */
 }

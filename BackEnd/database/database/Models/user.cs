@@ -13,7 +13,19 @@ namespace database.Models
         public DateTime createTime { get; set; }
         public DateTime updateTime { get; set; }
         public string Ticket { get; set; }
+        public bool result { get; set; }
     }
+
+    public class user2
+    {
+        public string username { get; set; }
+        public string password { get; set; }
+    }
+
+
+
+
+
     public class userLog
     {
         public DateTime dateTime { get; set; }
